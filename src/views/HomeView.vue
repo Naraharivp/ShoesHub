@@ -217,7 +217,11 @@
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5 text-gray-300 group-hover:text-primary-600 transition-colors duration-300"
+                    class="h-5 w-5 transition-colors duration-300"
+                    :class="{
+                      'text-blue-600 fill-current': isInCart(product.id),
+                      'text-gray-300 group-hover:text-primary-600': !isInCart(product.id),
+                    }"
                     viewBox="0 0 20 20"
                     fill="currentColor"
                   >
@@ -487,11 +491,15 @@
 <script>
 import { useProductStore } from '@/stores/productStore'
 import { storeToRefs } from 'pinia'
+import { ref } from 'vue'
 
 export default {
   setup() {
     const productStore = useProductStore()
     const { products, loading, error, favorites } = storeToRefs(productStore)
+
+    // Track cart items
+    const cartItems = ref([])
 
     const fetchProducts = () => {
       productStore.fetchProducts()
@@ -499,6 +507,15 @@ export default {
 
     const addToCart = (product) => {
       productStore.addToCart(product)
+
+      // Add product ID to cartItems if not already there
+      if (!cartItems.value.includes(product.id)) {
+        cartItems.value.push(product.id)
+      }
+    }
+
+    const isInCart = (productId) => {
+      return cartItems.value.includes(productId)
     }
 
     const toggleFavorite = (productId) => {
@@ -515,6 +532,7 @@ export default {
       error,
       fetchProducts,
       addToCart,
+      isInCart,
       toggleFavorite,
       isFavorite,
     }
