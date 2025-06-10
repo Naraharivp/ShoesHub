@@ -64,26 +64,13 @@
 
                 <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center">
                   <div class="flex items-center mb-4 sm:mb-0">
-                    <button
-                      @click="updateQuantity(item.id, Math.max(1, item.quantity - 1))"
-                      class="bg-gray-200 text-gray-700 py-1 px-3 rounded-l hover:bg-gray-300 transition-colors"
-                      :disabled="item.quantity <= 1"
-                    >
-                      -
-                    </button>
-                    <input
-                      type="number"
-                      v-model.number="item.quantity"
-                      min="1"
-                      class="w-12 text-center border-t border-b py-1"
-                      @change="updateQuantity(item.id, item.quantity)"
+                    <n-input-number
+                      v-model:value="item.quantity"
+                      :min="1"
+                      class="blue-input-number"
+                      style="width: 120px"
+                      @update:value="updateQuantity(item.id, item.quantity)"
                     />
-                    <button
-                      @click="updateQuantity(item.id, item.quantity + 1)"
-                      class="bg-gray-200 text-gray-700 py-1 px-3 rounded-r hover:bg-gray-300 transition-colors"
-                    >
-                      +
-                    </button>
                     <span class="ml-4 text-sm text-gray-500">${{ item.price }} each</span>
                   </div>
 
@@ -339,3 +326,42 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+:deep(.blue-input-number .n-base-selection) {
+  background-color: white;
+}
+
+:deep(.blue-input-number .n-input-number-button) {
+  background-color: #2563eb !important;
+  color: white !important;
+  border: none !important;
+}
+
+:deep(.blue-input-number .n-input-number-button:hover) {
+  background-color: #1d4ed8 !important;
+}
+
+:deep(.blue-input-number .n-base-suffix__separator) {
+  background-color: transparent !important;
+}
+
+:deep(.blue-input-number .n-icon) {
+  color: white !important;
+}
+
+/* Make buttons more visible */
+:deep(.blue-input-number .n-input-number-button) {
+  width: 24px !important;
+  height: 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+:deep(.blue-input-number .n-base-suffix) {
+  display: flex !important;
+  align-items: center !important;
+  gap: 2px !important;
+}
+</style>

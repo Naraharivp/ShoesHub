@@ -127,27 +127,13 @@
             <div class="mb-6">
               <h2 class="font-medium text-gray-800 mb-2">Quantity</h2>
               <div class="flex items-center">
-                <button
-                  @click="quantity > 1 ? quantity-- : quantity"
-                  class="bg-gray-200 text-gray-700 py-1 px-3 rounded-l hover:bg-gray-300 transition-colors"
-                  :disabled="quantity <= 1"
-                >
-                  -
-                </button>
-                <input
-                  type="number"
-                  v-model="quantity"
-                  min="1"
+                <n-input-number
+                  v-model:value="quantity"
+                  :min="1"
                   :max="product.stock"
-                  class="w-16 text-center border-t border-b py-1"
+                  class="blue-input-number"
+                  style="width: 140px"
                 />
-                <button
-                  @click="quantity < product.stock ? quantity++ : quantity"
-                  class="bg-gray-200 text-gray-700 py-1 px-3 rounded-r hover:bg-gray-300 transition-colors"
-                  :disabled="quantity >= product.stock"
-                >
-                  +
-                </button>
               </div>
             </div>
 
@@ -525,3 +511,42 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+:deep(.blue-input-number .n-base-selection) {
+  background-color: white;
+}
+
+:deep(.blue-input-number .n-input-number-button) {
+  background-color: #2563eb !important;
+  color: white !important;
+  border: none !important;
+}
+
+:deep(.blue-input-number .n-input-number-button:hover) {
+  background-color: #1d4ed8 !important;
+}
+
+:deep(.blue-input-number .n-base-suffix__separator) {
+  background-color: transparent !important;
+}
+
+:deep(.blue-input-number .n-icon) {
+  color: white !important;
+}
+
+/* Make buttons more visible */
+:deep(.blue-input-number .n-input-number-button) {
+  width: 24px !important;
+  height: 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+:deep(.blue-input-number .n-base-suffix) {
+  display: flex !important;
+  align-items: center !important;
+  gap: 2px !important;
+}
+</style>

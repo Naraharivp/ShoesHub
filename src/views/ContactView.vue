@@ -236,21 +236,6 @@
               </a>
               <a
                 href="#"
-                class="bg-blue-400 text-white p-3 rounded-full hover:bg-blue-500 transition-colors"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-6 w-6"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723 10.059 10.059 0 01-3.127 1.184 4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"
-                  />
-                </svg>
-              </a>
-              <a
-                href="#"
                 class="bg-red-600 text-white p-3 rounded-full hover:bg-red-700 transition-colors"
               >
                 <svg
@@ -269,14 +254,133 @@
         </div>
       </div>
 
+      <!-- Business Hours -->
+      <div class="mt-8 grid md:grid-cols-2 gap-8 mb-8">
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-medium">Business Hours</h2>
+            <span :class="isOpen ? 'open-badge' : 'closed-badge'">
+              {{ isOpen ? 'Open Now' : 'Closed Now' }}
+            </span>
+          </div>
+          <n-timeline>
+            <n-timeline-item content="Monday - Friday" time="9:00 AM - 6:00 PM">
+              <template #icon>
+                <div class="flex items-center justify-center w-10 h-10 rounded-full bg-blue-100">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-6 w-6 text-blue-600"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+              </template>
+            </n-timeline-item>
+            <n-timeline-item content="Saturday" time="10:00 AM - 4:00 PM">
+              <template #icon>
+                <div class="flex items-center justify-center w-10 h-10 rounded-full bg-blue-100">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-6 w-6 text-blue-600"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+              </template>
+            </n-timeline-item>
+            <n-timeline-item content="Sunday" time="Closed">
+              <template #icon>
+                <div class="flex items-center justify-center w-10 h-10 rounded-full bg-red-100">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-6 w-6 text-red-600"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+              </template>
+            </n-timeline-item>
+          </n-timeline>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h2 class="text-xl font-medium mb-6">FAQ</h2>
+          <n-collapse>
+            <n-collapse-item title="What payment methods do you accept?" name="1">
+              We accept all major credit cards (Visa, Mastercard, American Express), PayPal, and
+              bank transfers.
+            </n-collapse-item>
+            <n-collapse-item title="What is your return policy?" name="2">
+              You can return your purchase within 30 days of receiving your order. Items must be in
+              original condition with tags attached.
+            </n-collapse-item>
+            <n-collapse-item title="How long does shipping take?" name="3">
+              Domestic shipping typically takes 2-5 business days. International shipping can take
+              7-14 business days depending on the destination.
+            </n-collapse-item>
+          </n-collapse>
+        </div>
+      </div>
+
       <!-- Map -->
       <div class="mt-8 bg-white rounded-lg shadow-md p-6">
         <h2 class="text-xl font-medium mb-6">Our Location</h2>
-        <div class="h-96 bg-gray-200 rounded-lg">
-          <!-- In a real application, this would be a Google Maps or other map integration -->
-          <div class="h-full flex items-center justify-center">
-            <p class="text-gray-500">Map would be displayed here</p>
-          </div>
+        <div class="h-96 rounded-lg overflow-hidden">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15812.954320364451!2d110.35663389876648!3d-7.749189752459889!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a584b938d2abd%3A0xda946d9c423626d9!2sJombor%2C%20Sinduadi%2C%20Mlati%2C%20Sleman%20Regency%2C%20Special%20Region%20of%20Yogyakarta!5e0!3m2!1sen!2sid!4v1719228694775!5m2!1sen!2sid"
+            width="100%"
+            height="100%"
+            style="border: 0"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+          ></iframe>
+        </div>
+        <div class="mt-4 flex justify-end">
+          <a
+            href="https://www.google.com/maps/dir//Jombor,+Sinduadi,+Mlati,+Sleman+Regency,+Special+Region+of+Yogyakarta/@-7.7491898,110.3566339,15z/data=!4m9!4m8!1m0!1m5!1m1!1s0x2e7a584b938d2abd:0xda946d9c423626d9!2m2!1d110.36439!2d-7.7491897!3e0"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors flex items-center"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5 mr-2"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            Get Directions
+          </a>
         </div>
       </div>
     </div>
@@ -321,12 +425,53 @@ export default {
       }, 1500)
     }
 
+    // Current day to highlight in business hours
+    const currentDay = new Date().getDay()
+    const isOpen = () => {
+      const now = new Date()
+      const day = now.getDay() // 0 = Sunday, 1 = Monday, etc.
+      const hour = now.getHours()
+
+      if (day === 0) return false // Sunday closed
+      if (day >= 1 && day <= 5) {
+        // Monday to Friday
+        return hour >= 9 && hour < 18
+      }
+      if (day === 6) {
+        // Saturday
+        return hour >= 10 && hour < 16
+      }
+      return false
+    }
+
     return {
       form,
       submitting,
       formSubmitted,
       submitForm,
+      currentDay,
+      isOpen: isOpen(),
     }
   },
 }
 </script>
+
+<style scoped>
+.open-badge {
+  background-color: #10b981;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.closed-badge {
+  background-color: #ef4444;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+</style>

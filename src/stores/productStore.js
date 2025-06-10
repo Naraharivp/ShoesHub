@@ -27,9 +27,11 @@ export const useProductStore = defineStore('product', {
       try {
         this.products = await getAllProducts()
         this.error = null
+        return Promise.resolve(this.products)
       } catch (err) {
         this.error = 'Failed to load products'
         console.error(err)
+        return Promise.reject(err)
       } finally {
         this.loading = false
       }
