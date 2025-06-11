@@ -50,6 +50,18 @@ const router = createRouter({
       name: 'search',
       component: () => import('../views/SearchView.vue'),
     },
+    {
+      path: '/signin',
+      name: 'signin',
+      component: () => import('../views/SignInView.vue'),
+      meta: { isAuthPage: true },
+    },
+    {
+      path: '/signup',
+      name: 'signup',
+      component: () => import('../views/SignUpView.vue'),
+      meta: { isAuthPage: true },
+    },
   ],
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {

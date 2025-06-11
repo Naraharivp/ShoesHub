@@ -2,8 +2,10 @@
 import { RouterLink, RouterView } from 'vue-router'
 import { ref, onMounted, onBeforeUnmount, watch, computed } from 'vue'
 import { useProductStore } from './stores/productStore'
+import { useRoute } from 'vue-router'
 import BackToTop from './components/BackToTop.vue'
 
+const route = useRoute()
 const productStore = useProductStore()
 const isMenuOpen = ref(false)
 const isScrolled = ref(false)
@@ -13,6 +15,11 @@ const searchQuery = ref('')
 const isSearchOpen = ref(false)
 const isScrolling = ref(false)
 let scrollTimer = null
+
+// Check if current route is an auth page
+const isAuthPage = computed(() => {
+  return route.meta.isAuthPage
+})
 
 const themeOverrides = {
   InputNumber: {
@@ -113,10 +120,11 @@ onBeforeUnmount(() => {
   <n-config-provider :theme-overrides="themeOverrides">
     <div class="min-h-screen flex flex-col page-enter-active custom-scrollbar">
       <!-- Back to top button -->
-      <BackToTop />
+      <BackToTop v-if="!isAuthPage" />
 
-      <!-- Header -->
+      <!-- Header - Hidden on auth pages -->
       <header
+        v-if="!isAuthPage"
         class="fixed top-0 w-full z-50 transition-all duration-300 shadow-md"
         :class="[
           isScrolled
@@ -280,16 +288,18 @@ onBeforeUnmount(() => {
 
               <!-- Sign In Button (Desktop) -->
               <div class="hidden md:block">
-                <button
-                  class="btn-secondary inline-flex items-center justify-center bg-transparent backdrop-blur-sm border-2 px-4 py-2 rounded-lg transition-all duration-300"
-                  :class="
-                    isScrolled
-                      ? 'border-white/50 text-white hover:bg-white/20'
-                      : 'border-primary-600/50 text-primary-600 hover:bg-primary-600/10'
-                  "
-                >
-                  Sign In
-                </button>
+                <RouterLink to="/signin">
+                  <button
+                    class="btn-secondary inline-flex items-center justify-center bg-transparent backdrop-blur-sm border-2 px-4 py-2 rounded-lg transition-all duration-300"
+                    :class="
+                      isScrolled
+                        ? 'border-white/50 text-white hover:bg-white/20'
+                        : 'border-primary-600/50 text-primary-600 hover:bg-primary-600/10'
+                    "
+                  >
+                    Sign In
+                  </button>
+                </RouterLink>
               </div>
 
               <!-- Mobile Menu Button -->
@@ -324,7 +334,7 @@ onBeforeUnmount(() => {
       </header>
 
       <!-- Content wrapper with padding for fixed header -->
-      <div class="pt-16">
+      <div :class="{ 'pt-16': !isAuthPage }">
         <!-- Search Overlay -->
         <div
           v-if="isSearchOpen"
@@ -426,16 +436,20 @@ onBeforeUnmount(() => {
             </nav>
 
             <div class="mt-auto space-y-4">
-              <button
-                class="btn-secondary inline-flex items-center justify-center w-full bg-transparent backdrop-blur-sm border-2 border-white/50 text-white hover:bg-white/20 px-4 py-3 rounded-lg transition-all duration-300"
-              >
-                Sign In
-              </button>
-              <button
-                class="btn-secondary inline-flex items-center justify-center w-full bg-transparent backdrop-blur-sm border-2 border-white/50 text-white hover:bg-white/20 px-4 py-3 rounded-lg transition-all duration-300"
-              >
-                Create Account
-              </button>
+              <RouterLink to="/signin" @click="toggleMenu" class="block">
+                <button
+                  class="btn-secondary inline-flex items-center justify-center w-full bg-transparent backdrop-blur-sm border-2 border-white/50 text-white hover:bg-white/20 px-4 py-3 rounded-lg transition-all duration-300"
+                >
+                  Sign In
+                </button>
+              </RouterLink>
+              <RouterLink to="/signup" @click="toggleMenu" class="block">
+                <button
+                  class="btn-secondary inline-flex items-center justify-center w-full bg-transparent backdrop-blur-sm border-2 border-white/50 text-white hover:bg-white/20 px-4 py-3 rounded-lg transition-all duration-300"
+                >
+                  Create Account
+                </button>
+              </RouterLink>
             </div>
 
             <div class="mt-8 flex justify-center space-x-6">
@@ -473,7 +487,7 @@ onBeforeUnmount(() => {
         </main>
       </div>
 
-      <footer class="bg-gray-900 text-white py-16">
+      <footer v-if="!isAuthPage" class="bg-gray-900 text-white py-16">
         <div class="container mx-auto">
           <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
             <div>
