@@ -11,6 +11,8 @@ const prevScrollPos = ref(window.pageYOffset)
 const isHeaderVisible = ref(true)
 const searchQuery = ref('')
 const isSearchOpen = ref(false)
+const isScrolling = ref(false)
+let scrollTimer = null
 
 const themeOverrides = {
   InputNumber: {
@@ -21,6 +23,16 @@ const themeOverrides = {
     iconColor: 'white',
     borderHover: '1px solid #2563eb',
     borderFocus: '1px solid #2563eb',
+  },
+  Button: {
+    textColorGhost: 'var(--n-color)',
+    borderRadiusMedium: '0.5rem',
+    borderRadiusSmall: '0.375rem',
+    fontSizeMedium: '0.875rem',
+    fontSizeSmall: '0.75rem',
+    heightMedium: '2.25rem',
+    heightSmall: '2rem',
+    fontWeightStrong: '500',
   },
 }
 
@@ -55,8 +67,25 @@ const handleScroll = () => {
   const currentScrollPos = window.pageYOffset
   isScrolled.value = currentScrollPos > 20
 
-  // Always keep the header visible
-  isHeaderVisible.value = true
+  // Set header visibility based on scroll direction
+  isHeaderVisible.value = prevScrollPos.value > currentScrollPos || currentScrollPos < 50
+
+  // Set scrolling state
+  isScrolling.value = true
+
+  // Clear previous timer
+  if (scrollTimer) clearTimeout(scrollTimer)
+
+  // Set timer to hide header when scrolling stops
+  scrollTimer = setTimeout(() => {
+    isScrolling.value = false
+    // Keep header visible if at top of page
+    if (currentScrollPos < 50) {
+      isHeaderVisible.value = true
+    } else {
+      isHeaderVisible.value = false
+    }
+  }, 1500)
 
   prevScrollPos.value = currentScrollPos
 }
@@ -76,6 +105,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   window.removeEventListener('scroll', handleScroll)
+  if (scrollTimer) clearTimeout(scrollTimer)
 })
 </script>
 
@@ -87,40 +117,71 @@ onBeforeUnmount(() => {
 
       <!-- Header -->
       <header
-        class="sticky top-0 z-50"
-        :class="[isScrolled ? 'bg-white/90 backdrop-blur-md py-2 scrolled' : 'bg-white py-4']"
+        class="fixed top-0 w-full z-50 transition-all duration-300 shadow-md"
+        :class="[
+          isScrolled
+            ? 'bg-primary-700/95 backdrop-blur-md py-2 text-white scrolled'
+            : 'bg-white py-4',
+          isHeaderVisible || isScrolling ? 'translate-y-0' : '-translate-y-full',
+        ]"
       >
         <div class="container mx-auto">
           <div class="flex justify-between items-center">
             <!-- Logo -->
-            <RouterLink to="/" class="text-2xl font-bold text-gradient"> ShoesHub </RouterLink>
+            <RouterLink
+              to="/"
+              class="text-2xl font-bold"
+              :class="isScrolled ? 'text-white' : 'text-gradient'"
+            >
+              ShoesHub
+            </RouterLink>
 
             <!-- Desktop Navigation -->
             <nav class="hidden md:flex items-center space-x-8">
               <RouterLink
                 to="/"
-                class="text-gray-700 hover:text-primary-600 font-medium transition-colors relative nav-link"
+                class="font-medium transition-colors relative nav-link"
+                :class="
+                  isScrolled
+                    ? 'text-white hover:text-accent-300'
+                    : 'text-gray-700 hover:text-primary-600'
+                "
                 active-class="text-primary-600"
               >
                 Home
               </RouterLink>
               <RouterLink
                 to="/products"
-                class="text-gray-700 hover:text-primary-600 font-medium transition-colors relative nav-link"
+                class="font-medium transition-colors relative nav-link"
+                :class="
+                  isScrolled
+                    ? 'text-white hover:text-accent-300'
+                    : 'text-gray-700 hover:text-primary-600'
+                "
                 active-class="text-primary-600"
               >
                 Products
               </RouterLink>
               <RouterLink
                 to="/about"
-                class="text-gray-700 hover:text-primary-600 font-medium transition-colors relative nav-link"
+                class="font-medium transition-colors relative nav-link"
+                :class="
+                  isScrolled
+                    ? 'text-white hover:text-accent-300'
+                    : 'text-gray-700 hover:text-primary-600'
+                "
                 active-class="text-primary-600"
               >
                 About
               </RouterLink>
               <RouterLink
                 to="/contact"
-                class="text-gray-700 hover:text-primary-600 font-medium transition-colors relative nav-link"
+                class="font-medium transition-colors relative nav-link"
+                :class="
+                  isScrolled
+                    ? 'text-white hover:text-accent-300'
+                    : 'text-gray-700 hover:text-primary-600'
+                "
                 active-class="text-primary-600"
               >
                 Contact
@@ -132,7 +193,12 @@ onBeforeUnmount(() => {
               <!-- Search Button -->
               <button
                 @click="toggleSearch"
-                class="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-700 hover:text-primary-600"
+                class="p-2 rounded-full transition-colors"
+                :class="
+                  isScrolled
+                    ? 'hover:bg-white/20 text-white hover:text-white'
+                    : 'hover:bg-gray-100 text-gray-700 hover:text-primary-600'
+                "
                 aria-label="Search"
               >
                 <svg
@@ -154,7 +220,12 @@ onBeforeUnmount(() => {
               <!-- Favorites -->
               <RouterLink
                 to="/favorites"
-                class="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-700 hover:text-primary-600 group relative"
+                class="p-2 rounded-full transition-colors group relative"
+                :class="
+                  isScrolled
+                    ? 'hover:bg-white/20 text-white hover:text-white'
+                    : 'hover:bg-gray-100 text-gray-700 hover:text-primary-600'
+                "
                 aria-label="Favorites"
               >
                 <svg
@@ -176,7 +247,12 @@ onBeforeUnmount(() => {
               <!-- Cart -->
               <RouterLink
                 to="/cart"
-                class="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-700 hover:text-primary-600 relative"
+                class="p-2 rounded-full transition-colors relative"
+                :class="
+                  isScrolled
+                    ? 'hover:bg-white/20 text-white hover:text-white'
+                    : 'hover:bg-gray-100 text-gray-700 hover:text-primary-600'
+                "
                 aria-label="Cart"
               >
                 <svg
@@ -203,12 +279,28 @@ onBeforeUnmount(() => {
               </RouterLink>
 
               <!-- Sign In Button (Desktop) -->
-              <button class="btn-primary hidden md:block">Sign In</button>
+              <div class="hidden md:block">
+                <button
+                  class="btn-secondary inline-flex items-center justify-center bg-transparent backdrop-blur-sm border-2 px-4 py-2 rounded-lg transition-all duration-300"
+                  :class="
+                    isScrolled
+                      ? 'border-white/50 text-white hover:bg-white/20'
+                      : 'border-primary-600/50 text-primary-600 hover:bg-primary-600/10'
+                  "
+                >
+                  Sign In
+                </button>
+              </div>
 
               <!-- Mobile Menu Button -->
               <button
                 @click="toggleMenu"
-                class="md:hidden p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-700 hover:text-primary-600"
+                class="md:hidden p-2 rounded-full transition-colors"
+                :class="
+                  isScrolled
+                    ? 'hover:bg-white/20 text-white hover:text-white'
+                    : 'hover:bg-gray-100 text-gray-700 hover:text-primary-600'
+                "
                 aria-label="Menu"
               >
                 <svg
@@ -231,146 +323,155 @@ onBeforeUnmount(() => {
         </div>
       </header>
 
-      <!-- Search Overlay -->
-      <div
-        v-if="isSearchOpen"
-        class="fixed inset-0 bg-black/50 z-50 flex items-start justify-center pt-24"
-        @click="isSearchOpen = false"
-      >
+      <!-- Content wrapper with padding for fixed header -->
+      <div class="pt-16">
+        <!-- Search Overlay -->
         <div
-          class="bg-white w-full max-w-2xl mx-4 rounded-xl shadow-2xl overflow-hidden"
-          @click.stop
+          v-if="isSearchOpen"
+          class="fixed inset-0 bg-black/50 z-50 flex items-start justify-center pt-24"
+          @click="isSearchOpen = false"
         >
-          <form @submit.prevent="handleSearch" class="flex items-center p-4">
-            <input
-              id="search-input"
-              v-model="searchQuery"
-              type="text"
-              placeholder="Search for products..."
-              class="w-full px-4 py-3 border-0 focus:ring-0 text-lg"
-              autofocus
-            />
-            <button
-              type="submit"
-              class="bg-primary-600 hover:bg-primary-700 text-white p-3 rounded-lg ml-2"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+          <div
+            class="bg-white w-full max-w-2xl mx-4 rounded-xl shadow-2xl overflow-hidden"
+            @click.stop
+          >
+            <form @submit.prevent="handleSearch" class="flex items-center p-4">
+              <input
+                id="search-input"
+                v-model="searchQuery"
+                type="text"
+                placeholder="Search for products..."
+                class="w-full px-4 py-3 border-0 focus:ring-0 text-lg"
+                autofocus
+              />
+              <button
+                type="submit"
+                class="bg-primary-600 hover:bg-primary-700 text-white p-3 rounded-lg ml-2"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-            </button>
-          </form>
-          <div class="border-t border-gray-100 px-4 py-3 text-sm text-gray-500">
-            Press ESC to close
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </button>
+            </form>
+            <div class="border-t border-gray-100 px-4 py-3 text-sm text-gray-500">
+              Press ESC to close
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Mobile Menu -->
-      <div
-        v-if="isMenuOpen"
-        class="fixed inset-0 bg-gradient-to-br from-primary-700 to-primary-900 z-50 flex flex-col md:hidden"
-      >
-        <div class="container mx-auto px-6 py-8 flex-grow flex flex-col">
-          <div class="flex justify-between items-center mb-10">
-            <RouterLink @click="toggleMenu" to="/" class="text-2xl font-bold text-white">
-              ShoesHub
-            </RouterLink>
-            <button @click="toggleMenu" class="text-white p-1">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-8 w-8"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+        <!-- Mobile Menu -->
+        <div
+          v-if="isMenuOpen"
+          class="fixed inset-0 bg-gradient-to-br from-primary-700 to-primary-900 z-50 flex flex-col md:hidden"
+        >
+          <div class="container mx-auto px-6 py-8 flex-grow flex flex-col">
+            <div class="flex justify-between items-center mb-10">
+              <RouterLink @click="toggleMenu" to="/" class="text-2xl font-bold text-white">
+                ShoesHub
+              </RouterLink>
+              <button @click="toggleMenu" class="text-white p-1">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-8 w-8"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            <nav class="flex flex-col space-y-6 mb-10">
+              <RouterLink
+                @click="toggleMenu"
+                to="/"
+                class="text-white text-2xl font-medium hover:text-accent-300 transition-colors"
+                >Home</RouterLink
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-          </div>
+              <RouterLink
+                @click="toggleMenu"
+                to="/products"
+                class="text-white text-2xl font-medium hover:text-accent-300 transition-colors"
+                >Products</RouterLink
+              >
+              <RouterLink
+                @click="toggleMenu"
+                to="/about"
+                class="text-white text-2xl font-medium hover:text-accent-300 transition-colors"
+                >About</RouterLink
+              >
+              <RouterLink
+                @click="toggleMenu"
+                to="/contact"
+                class="text-white text-2xl font-medium hover:text-accent-300 transition-colors"
+                >Contact</RouterLink
+              >
+            </nav>
 
-          <nav class="flex flex-col space-y-6 mb-10">
-            <RouterLink
-              @click="toggleMenu"
-              to="/"
-              class="text-white text-2xl font-medium hover:text-accent-300 transition-colors"
-              >Home</RouterLink
-            >
-            <RouterLink
-              @click="toggleMenu"
-              to="/products"
-              class="text-white text-2xl font-medium hover:text-accent-300 transition-colors"
-              >Products</RouterLink
-            >
-            <RouterLink
-              @click="toggleMenu"
-              to="/about"
-              class="text-white text-2xl font-medium hover:text-accent-300 transition-colors"
-              >About</RouterLink
-            >
-            <RouterLink
-              @click="toggleMenu"
-              to="/contact"
-              class="text-white text-2xl font-medium hover:text-accent-300 transition-colors"
-              >Contact</RouterLink
-            >
-          </nav>
+            <div class="mt-auto space-y-4">
+              <button
+                class="btn-secondary inline-flex items-center justify-center w-full bg-transparent backdrop-blur-sm border-2 border-white/50 text-white hover:bg-white/20 px-4 py-3 rounded-lg transition-all duration-300"
+              >
+                Sign In
+              </button>
+              <button
+                class="btn-secondary inline-flex items-center justify-center w-full bg-transparent backdrop-blur-sm border-2 border-white/50 text-white hover:bg-white/20 px-4 py-3 rounded-lg transition-all duration-300"
+              >
+                Create Account
+              </button>
+            </div>
 
-          <div class="mt-auto space-y-4">
-            <button class="btn-accent w-full py-3">Sign In</button>
-            <button class="btn-secondary bg-white/10 text-white border-white/20 w-full py-3">
-              Create Account
-            </button>
-          </div>
-
-          <div class="mt-8 flex justify-center space-x-6">
-            <a href="#" class="text-white/70 hover:text-white transition-colors">
-              <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                <path
-                  d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
-                ></path>
-              </svg>
-            </a>
-            <a href="#" class="text-white/70 hover:text-white transition-colors">
-              <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                <path
-                  d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.82 7.6c.005.103.005.207.005.31 0 3.178-2.418 6.84-6.84 6.84a6.796 6.796 0 01-3.681-1.078c.188.022.377.033.577.033a4.815 4.815 0 002.984-1.028 2.407 2.407 0 01-2.249-1.67 2.4 2.4 0 001.084-.044 2.404 2.404 0 01-1.93-2.358v-.033c.324.18.694.289 1.084.3a2.4 2.4 0 01-.745-3.212 6.82 6.82 0 004.95 2.509 2.405 2.405 0 014.1-2.193 4.81 4.81 0 001.53-.583 2.42 2.42 0 01-1.056 1.33 4.81 4.81 0 001.384-.377 4.92 4.92 0 01-1.198 1.244z"
-                ></path>
-              </svg>
-            </a>
-            <a href="#" class="text-white/70 hover:text-white transition-colors">
-              <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                <path
-                  d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 3.75c2.035 0 2.277.008 3.081.045.744.034 1.15.158 1.419.263.357.138.61.303.878.57.268.268.433.521.57.878.105.27.23.675.263 1.419.037.804.045 1.046.045 3.081s-.008 2.277-.045 3.081c-.034.744-.158 1.15-.263 1.419-.138.357-.303.61-.57.878-.268.268-.521.433-.878.57-.27.105-.675.23-1.419.263-.804.037-1.046.045-3.081.045s-2.277-.008-3.081-.045c-.744-.034-1.15-.158-1.419-.263a2.322 2.322 0 01-.878-.57 2.322 2.322 0 01-.57-.878c-.105-.27-.23-.675-.263-1.419-.037-.804-.045-1.046-.045-3.081s.008-2.277.045-3.081c.034-.744.158-1.15.263-1.419.138-.357.303-.61.57-.878.268-.268.521-.433.878-.57.27-.105.675-.23 1.419-.263.804-.037 1.046-.045 3.081-.045z"
-                ></path>
-              </svg>
-            </a>
+            <div class="mt-8 flex justify-center space-x-6">
+              <a href="#" class="text-white/70 hover:text-white transition-colors">
+                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path
+                    d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
+                  ></path>
+                </svg>
+              </a>
+              <a href="#" class="text-white/70 hover:text-white transition-colors">
+                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.82 7.6c.005.103.005.207.005.31 0 3.178-2.418 6.84-6.84 6.84a6.796 6.796 0 01-3.681-1.078c.188.022.377.033.577.033a4.815 4.815 0 002.984-1.028 2.407 2.407 0 01-2.249-1.67 2.4 2.4 0 001.084-.044 2.404 2.404 0 01-1.93-2.358v-.033c.324.18.694.289 1.084.3a2.4 2.4 0 01-.745-3.212 6.82 6.82 0 004.95 2.509 2.405 2.405 0 014.1-2.193 4.81 4.81 0 001.53-.583 2.42 2.42 0 01-1.056 1.33 4.81 4.81 0 001.384-.377 4.92 4.92 0 01-1.198 1.244z"
+                  ></path>
+                </svg>
+              </a>
+              <a href="#" class="text-white/70 hover:text-white transition-colors">
+                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 3.75c2.035 0 2.277.008 3.081.045.744.034 1.15.158 1.419.263.357.138.61.303.878.57.268.268.433.521.57.878.105.27.23.675.263 1.419.037.804.045 1.046.045 3.081s-.008 2.277-.045 3.081c-.034.744-.158 1.15-.263 1.419-.138.357-.303.61-.57.878-.268.268-.521.433-.878.57-.27.105-.675.23-1.419.263-.804.037-1.046.045-3.081.045s-2.277-.008-3.081-.045c-.744-.034-1.15-.158-1.419-.263a2.322 2.322 0 01-.878-.57 2.322 2.322 0 01-.57-.878c-.105-.27-.23-.675-.263-1.419-.037-.804-.045-1.046-.045-3.081s.008-2.277.045-3.081c.034-.744.158-1.15.263-1.419.138-.357.303-.61.57-.878.268-.268.521-.433.878-.57.27-.105.675-.23 1.419-.263.804-.037 1.046-.045 3.081-.045z"
+                  ></path>
+                </svg>
+              </a>
+            </div>
           </div>
         </div>
-      </div>
 
-      <main class="flex-grow">
-        <RouterView v-slot="{ Component }">
-          <transition name="page" mode="out-in">
-            <component :is="Component" />
-          </transition>
-        </RouterView>
-      </main>
+        <main class="flex-grow">
+          <RouterView v-slot="{ Component }">
+            <transition name="page" mode="out-in">
+              <component :is="Component" />
+            </transition>
+          </RouterView>
+        </main>
+      </div>
 
       <footer class="bg-gray-900 text-white py-16">
         <div class="container mx-auto">
@@ -495,7 +596,22 @@ onBeforeUnmount(() => {
 
 /* Header scroll animation */
 header {
-  transition: transform 0.3s ease-in-out;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+}
+
+header.scrolled {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* NaiveUI button customizations */
+.n-button--ghost.n-button--default-type {
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  color: white !important;
+}
+
+.n-button--ghost.n-button--info-type {
+  border-color: var(--primary-color) !important;
 }
 
 /* Page load animation */
@@ -533,5 +649,38 @@ header {
 .nav-link:hover::after,
 .nav-link.router-link-active::after {
   width: 100%;
+}
+
+/* Custom button styles */
+.btn-primary {
+  @apply bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition-colors;
+}
+
+.btn-secondary {
+  @apply font-medium transition-all duration-300;
+}
+
+/* Text gradient effect */
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-accent-500;
+}
+
+/* Custom scrollbar */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-color) #f1f1f1;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--primary-color);
+  border-radius: 20px;
 }
 </style>
