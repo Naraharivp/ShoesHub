@@ -22,6 +22,7 @@ ShoesHub is a modern, responsive e-commerce platform built with Vue.js and Tailw
 ## 🛠️ Technologies Used
 
 - **Frontend Framework**: [Vue.js 3](https://vuejs.org/) with Composition API
+- **UI Components**: [Naive UI](https://www.naiveui.com/) for high-quality Vue 3 components
 - **State Management**: [Pinia](https://pinia.vuejs.org/)
 - **Routing**: [Vue Router](https://router.vuejs.org/)
 - **Styling**: [TailwindCSS](https://tailwindcss.com/) for utility-first CSS
@@ -105,8 +106,28 @@ The application is fully responsive and optimized for:
 - **Color Scheme**: Modern gradient color palette with primary and accent colors
 - **Typography**: Clean, readable fonts with proper hierarchy
 - **Components**: Reusable button styles, cards, form elements with consistent design
+- **UI Framework**: Integration of Naive UI components for enhanced functionality
 - **Animations**: Subtle animations for enhanced user experience
 - **Accessibility**: ARIA attributes and keyboard navigation support
+
+## 🧩 Naive UI Integration
+
+This project leverages [Naive UI](https://www.naiveui.com/), a Vue 3 component library with the following benefits:
+
+- **Comprehensive Components**: Over 80 high-quality components available
+- **TypeScript Support**: Full TypeScript support for type safety
+- **Customization**: Highly customizable theme system
+- **Dark Mode**: Built-in dark mode support
+- **Internationalization**: Support for multiple languages
+- **Performance**: Tree-shakable components for optimized bundle size
+
+Key Naive UI components used in this project:
+
+- Config Provider for theme customization
+- Button components with various styles
+- Input components with validation
+- Modal dialogs for interactive experiences
+- Form components for data collection
 
 ## 🔮 Future Enhancements
 
@@ -116,6 +137,7 @@ The application is fully responsive and optimized for:
 - Product recommendations
 - Order tracking functionality
 - Admin dashboard for product management
+- Enhanced Naive UI component usage
 
 ## 📄 License
 
